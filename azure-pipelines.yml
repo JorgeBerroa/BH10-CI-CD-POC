@@ -27,7 +27,10 @@ steps:
     command: custom
     customCommand: run test -- --watch=false --code-coverage
 
-
+- task: CmdLine@2
+  inputs:
+    script: 'cd coverage && ls'
+    
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage Angular results'
   condition: succeededOrFailed()
