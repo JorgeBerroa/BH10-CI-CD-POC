@@ -39,7 +39,7 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: 'ls'
+    script: 'cd junit && ls'
     
 - task: PublishTestResults@2
   displayName: 'Publish Angular test results'
