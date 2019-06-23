@@ -40,15 +40,21 @@ steps:
 - task: CmdLine@2
   inputs:
     script: 'cd junit && ls'
-    
+
 - task: PublishTestResults@2
-  displayName: 'Publish Angular test results'
-  condition: succeededOrFailed()
   inputs:
-    searchFolder: ./junit
-    testRunTitle: Angular
-    testResultsFormat: JUnit
-    testResultsFiles: "**/TESTS*.xml"
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/junit'
+    
+# - task: PublishTestResults@2
+#   displayName: 'Publish Angular test results'
+#   condition: succeededOrFailed()
+#   inputs:
+#     searchFolder: ./junit
+#     testRunTitle: Angular
+#     testResultsFormat: JUnit
+#     testResultsFiles: "**/TESTS*.xml"
 
 - task: DeleteFiles@1
   displayName: 'Delete JUnit files'
