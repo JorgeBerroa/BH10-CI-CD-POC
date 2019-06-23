@@ -44,7 +44,7 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: 'TEST-*.xml'
+    testResultsFiles: 'TESTS-*.xml'
     searchFolder: '$(System.DefaultWorkingDirectory)/junit'
     
 # - task: PublishTestResults@2
