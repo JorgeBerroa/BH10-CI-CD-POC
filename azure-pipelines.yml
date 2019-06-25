@@ -15,6 +15,7 @@ stages:
       steps:
       - script: |
           node --version
+          npm --version
           sudo npm install -g @angular/cli
           npm install
           ng build --prod
