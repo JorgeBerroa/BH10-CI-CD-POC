@@ -13,11 +13,6 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: '10.x'
-        displayName: 'Install Node.js'
-
       - script: |
           npm install -g @angular/cli
           npm install
@@ -31,6 +26,7 @@ stages:
       pool:
         vmImage: 'Ubuntu 16.04'
       steps:
+      - script: npm install -g @angular/cli
       - task: Npm@1
         displayName: 'Test Angular'
         inputs:
