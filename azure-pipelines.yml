@@ -37,7 +37,7 @@ stages:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
 
-  - stage: publish test results
+  - stage: publish_test_results
     dependsOn: test
     jobs:
     - job: publish_tests
