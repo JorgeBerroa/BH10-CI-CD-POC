@@ -6,46 +6,64 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+  - stage: build
+    jobs:
+    - job: run_build
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '10.x'
+        displayName: 'Install Node.js'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+      - script: |
+          npm install -g @angular/cli
+          npm install
+          ng build --prod
+        displayName: 'npm install and build'
 
-- script: |
-    npm install -g @angular/cli
-    npm install
-    ng build --prod
-  displayName: 'npm install and build'
+  - stage: test
+    dependsOn: build
+    jobs:
+    - job: run_tests
+      pool:
+        vmImage: 'Ubuntu 16.04'
+      steps:
+      - task: Npm@1
+        displayName: 'Test Angular'
+        inputs:
+          command: custom
+          customCommand: run test -- --watch=false --code-coverage
 
-- task: Npm@1
-  displayName: 'Test Angular'
-  inputs:
-    command: custom
-    customCommand: run test -- --watch=false --code-coverage
+  - stage: publish test results
+    dependsOn: test
+    jobs:
+    - job: publish_tests
+      pool:
+        vmImage: 'Ubuntu 16.04'
+      steps:      
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage Angular results'
+        condition: succeededOrFailed()
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: 'coverage/my-app/cobertura-coverage.xml'
+          reportDirectory: coverage
+          failIfCoverageEmpty: true
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'TESTS-*.xml'
+          searchFolder: '$(System.DefaultWorkingDirectory)/junit'
 
-    
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage Angular results'
-  condition: succeededOrFailed()
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: 'coverage/my-app/cobertura-coverage.xml'
-    reportDirectory: coverage
-    failIfCoverageEmpty: true
-
-- task: CmdLine@2
-  inputs:
-    script: 'cd junit && ls'
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: 'TESTS-*.xml'
-    searchFolder: '$(System.DefaultWorkingDirectory)/junit'
+          
+# - task: DeleteFiles@1
+#   displayName: 'Delete JUnit files'
+#   inputs:
+#     SourceFolder: ./junit
+#     Contents: 'TESTS*.xml'
     
 # - task: PublishTestResults@2
 #   displayName: 'Publish Angular test results'
@@ -56,8 +74,4 @@ steps:
 #     testResultsFormat: JUnit
 #     testResultsFiles: "**/TESTS*.xml"
 
-- task: DeleteFiles@1
-  displayName: 'Delete JUnit files'
-  inputs:
-    SourceFolder: ./junit
-    Contents: 'TESTS*.xml'
+
