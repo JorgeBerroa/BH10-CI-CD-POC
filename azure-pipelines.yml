@@ -24,7 +24,7 @@ stages:
         displayName: 'npm install and build'
 
   - stage: Test
-    dependsOn: build
+    dependsOn: Build
     jobs:
     - job: L0
       pool:
