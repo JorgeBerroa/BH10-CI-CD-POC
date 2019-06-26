@@ -24,6 +24,7 @@ stages:
         displayName: 'npm install and build'
 
   - stage: Test
+    displayName : Test
     dependsOn: Build
     jobs:
     - job: L0
@@ -57,6 +58,10 @@ stages:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
     - job: publish_tests
+      dependsOn:
+      - L0
+      - L1
+      - L2
       pool:
         vmImage: 'Ubuntu 16.04'
       steps:
