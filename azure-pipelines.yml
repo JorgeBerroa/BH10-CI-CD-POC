@@ -7,7 +7,7 @@ trigger:
 - master
 
 stages:
-  - stage: build
+  - stage: Build
     jobs:
     - job: run_build
       pool:
@@ -23,7 +23,7 @@ stages:
           ng build --prod
         displayName: 'npm install and build'
 
-  - stage: test
+  - stage: Test
     dependsOn: build
     jobs:
     - job: L0
