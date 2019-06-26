@@ -23,61 +23,6 @@ stages:
           ng build --prod
         displayName: 'npm install and build'
 
-  - stage: x
-    displayName: Test
-    dependsOn: Build
-    jobs:
-    - job: L0
-      pool:
-        vmImage: 'Ubuntu 16.04'
-      steps:
-      - script: npm install 
-      - task: Npm@1
-        displayName: 'Test Angular'
-        inputs:
-          command: custom
-          customCommand: run test -- --watch=false --code-coverage
-    - job: L1
-      pool:
-        vmImage: 'Ubuntu 16.04'
-      steps:
-      - script: npm install 
-      - task: Npm@1
-        displayName: 'Test Angular'
-        inputs:
-          command: custom
-          customCommand: run test -- --watch=false --code-coverage
-    - job: L2
-      pool:
-        vmImage: 'Ubuntu 16.04'
-      steps:
-      - script: npm install 
-      - task: Npm@1
-        displayName: 'Test Angular'
-        inputs:
-          command: custom
-          customCommand: run test -- --watch=false --code-coverage
-    - job: PublishTestResults
-      dependsOn:
-      - L0
-      - L1
-      - L2
-      pool:
-        vmImage: 'Ubuntu 16.04'
-      steps:
-      - task: PublishCodeCoverageResults@1
-        displayName: 'Publish code coverage Angular results'
-        condition: succeededOrFailed()
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: 'coverage/my-app/cobertura-coverage.xml'
-          reportDirectory: coverage
-          failIfCoverageEmpty: true
-      - task: PublishTestResults@2
-        inputs:
-          testResultsFormat: 'JUnit'
-          testResultsFiles: 'TESTS-*.xml'
-          searchFolder: '$(System.DefaultWorkingDirectory)/junit'
 
           
 # - task: DeleteFiles@1
