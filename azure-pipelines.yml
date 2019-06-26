@@ -23,7 +23,7 @@ stages:
           ng build --prod
         displayName: 'npm install and build'
   - stage: x
-    displayName: lol
+    displayName: Test
     dependsOn: Build
     jobs:
     - job: L0
