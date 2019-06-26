@@ -26,7 +26,7 @@ stages:
   - stage: test
     dependsOn: build
     jobs:
-    - job: run_tests
+    - job: L0
       pool:
         vmImage: 'Ubuntu 16.04'
       steps:
@@ -36,10 +36,26 @@ stages:
         inputs:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
-
-  - stage: publish_test_results
-    dependsOn: test
-    jobs:
+    - job: L1
+      pool:
+        vmImage: 'Ubuntu 16.04'
+      steps:
+      - script: npm install 
+      - task: Npm@1
+        displayName: 'Test Angular'
+        inputs:
+          command: custom
+          customCommand: run test -- --watch=false --code-coverage
+    - job: L2
+      pool:
+        vmImage: 'Ubuntu 16.04'
+      steps:
+      - script: npm install 
+      - task: Npm@1
+        displayName: 'Test Angular'
+        inputs:
+          command: custom
+          customCommand: run test -- --watch=false --code-coverage
     - job: publish_tests
       pool:
         vmImage: 'Ubuntu 16.04'
