@@ -13,9 +13,14 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '10.x'
+        displayName: 'Install Node.js'
       - script: |
+          npm install -g @angular/cli
           npm install
-          npm run build --prod
+          ng build --prod
         displayName: 'npm install and build'
 
   - stage: test
@@ -38,7 +43,10 @@ stages:
     - job: publish_tests
       pool:
         vmImage: 'Ubuntu 16.04'
-      steps:      
+      steps:
+      - task: CmdLine@2
+        inputs:
+          script: 'ls'
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish code coverage Angular results'
         condition: succeededOrFailed()
