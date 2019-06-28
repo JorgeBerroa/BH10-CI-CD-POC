@@ -60,6 +60,7 @@ stages:
       pool:
         vmImage: 'Ubuntu 16.04'
       steps:
+      - script: npm install 
       - task: Npm@1
         displayName: 'E2E Test Angular'
         inputs:
