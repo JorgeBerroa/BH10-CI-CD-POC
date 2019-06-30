@@ -13,16 +13,28 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+
       - task: NodeTool@0
         inputs:
           versionSpec: '10.x'
         displayName: 'Install Node.js'
+
       - script: |
           npm install -g @angular/cli
           npm install
           ng build --prod
         displayName: 'npm install and build'
-  - stage: x
+
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)/dist/'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          ArtifactName: 'drop'
+
+  - stage: test
     displayName: Tests
     dependsOn: Build
     jobs:
@@ -36,6 +48,7 @@ stages:
         inputs:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
+        
     - job: L1
       pool:
         vmImage: 'Ubuntu 16.04'
@@ -46,6 +59,7 @@ stages:
         inputs:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
+
     - job: L2
       pool:
         vmImage: 'Ubuntu 16.04'
@@ -56,6 +70,7 @@ stages:
         inputs:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
+
     - job: E2E
       pool:
         vmImage: 'Ubuntu 16.04'
@@ -76,16 +91,19 @@ stages:
         vmImage: 'Ubuntu 16.04'
       steps:
       - script: npm install 
+
       - task: Npm@1
         displayName: 'Test Angular'
         inputs:
           command: custom
           customCommand: run test -- --watch=false --code-coverage
+
       - task: Npm@1
         displayName: 'Test Angular'
         inputs:
           command: custom
           customCommand: run e2e 
+
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish code coverage Angular results'
         condition: succeededOrFailed()
@@ -94,11 +112,13 @@ stages:
           summaryFileLocation: 'coverage/my-app/cobertura-coverage.xml'
           reportDirectory: coverage
           failIfCoverageEmpty: true
+
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: 'JUnit'
           testResultsFiles: 'TESTS-*.xml'
           searchFolder: '$(System.DefaultWorkingDirectory)/junit'
+
       - task: PublishTestResults@2
         displayName: 'Publish Angular E2E test results'
         condition: succeededOrFailed()
